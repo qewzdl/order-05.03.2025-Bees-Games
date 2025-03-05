@@ -1,0 +1,184 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Arial", sans-serif;
+  overflow: hidden;
+  background-color: #87ceeb;
+}
+
+.game-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Start screen */
+.start-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f8ff;
+  z-index: 10;
+}
+
+.start-button {
+  padding: 15px 30px;
+  font-size: 24px;
+  font-weight: bold;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.start-button:hover {
+  transform: scale(1.05);
+  background-color: #45a049;
+}
+
+.start-button:active {
+  transform: scale(0.98);
+}
+
+/* Game screen */
+.game-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  background-image: linear-gradient(to bottom, #87ceeb, #e0f7fa);
+}
+
+.score-container {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 10px 15px;
+  border-radius: 20px;
+  font-size: 20px;
+  font-weight: bold;
+  z-index: 2;
+}
+
+.game-area {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* Bee styling */
+.bee {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  z-index: 1;
+}
+
+.bee svg {
+  width: 100%;
+  height: 100%;
+}
+
+.bee:hover {
+  transform: scale(1.1);
+}
+
+/* Bee disappearing animation */
+@keyframes disappear {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.5) rotate(180deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0);
+  }
+}
+
+.disappearing {
+  animation: disappear 0.5s forwards;
+}
+
+/* Добавить стили для экрана окончания игры */
+.end-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 20;
+}
+
+.end-message {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.end-message h1 {
+  color: #4caf50;
+  margin-bottom: 20px;
+}
+
+.end-message p {
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+#restart-button {
+  padding: 10px 20px;
+  font-size: 18px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s;
+}
+
+#restart-button:hover {
+  background-color: #45a049;
+}
+
+/* Добавить стили для цветов */
+.flower {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  z-index: 0;
+}
+
+.flower svg {
+  width: 100%;
+  height: 100%;
+}
+

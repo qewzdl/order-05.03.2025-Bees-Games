@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Собери букет</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fff5f8;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #e91e63;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .flowers-panel {
+            background-color: #ffcce0;
+            border: 2px solid #ff4081;
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            min-height: 100px;
+            align-items: center;
+        }
+
+        .flower {
+            width: 80px;
+            height: 80px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            user-select: none;
+        }
+
+        .flower:hover {
+            transform: scale(1.1);
+        }
+
+        .bouquet-area {
+            background-color: #ffcce0;
+            border: 2px solid #ff4081;
+            border-radius: 10px;
+            padding: 20px;
+            width: 100%;
+            height: 400px;
+            position: relative;
+        }
+
+        .hand-with-stems {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            height: 300px;
+            z-index: 1;
+        }
+
+        .stem-area {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 9999999;
+        }
+
+        .stem-spot {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 2px dashed #4CAF50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            transition: all 0.3s ease;
+            pointer-events: auto;
+        }
+
+        .stem-spot.highlight {
+            background-color: rgba(255, 255, 255, 0.5);
+            border: 2px solid #4CAF50;
+        }
+
+        .placed-flower {
+            width: 60px;
+            height: 60px;
+            position: absolute;
+            z-index: 10;
+            cursor: grab;
+        }
+
+        .reset-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #ff4081;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .reset-button:hover {
+            background-color: #e91e63;
+        }
+
+        .instructions {
+            margin-top: 20px;
+            text-align: center;
+            color: #e91e63;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Собери букет</h1>
+    
+    <div class="instructions">Перетяните цветы на стебельки, чтобы собрать красивый букет!</div>
+    
+    <div class="game-container">
+        <div class="flowers-panel" id="flowersPanel">
+        </div>
+        
+        <div class="bouquet-area">
+            <div class="stem-area" id="stemArea">
+            </div>
+            
+            <img src="./img/buket.svg" alt="Стебельки" class="hand-with-stems">
+        </div>
+    </div>
+    
+    <button class="reset-button" id="resetButton">Сбросить букет</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const flowersPanel = document.getElementById('flowersPanel');
+            const stemArea = document.getElementById('stemArea');
+            const resetButton = document.getElementById('resetButton');
+            
+            const flowers = [
+                {
+                    id: 'flower1',
+                    svg: `<img src=""`
+                },
+                {
+                    id: 'flower2',
+                    svg: `
+`
+                },
+                {
+                    id: 'flower3',
+                    svg: `
+`
+                },
+                {
+                    id: 'flower4',
+                    svg: `
+`
+                },
+                {
+                    id: 'flower5',
+                    svg: `
+
+`
+                },
+                {
+                    id: 'flower6',
+                    svg: `
+`
+                },
+                {
+                    id: 'flower7',
+                    svg: `
+`
+                }
+            ];
+            
+            flowers.forEach(flower => {
+                const flowerElement = document.createElement('div');
+                flowerElement.className = 'flower';
+                flowerElement.id = flower.id;
+                flowerElement.innerHTML = flower.svg;
+                flowerElement.setAttribute('draggable', 'true');
+                flowersPanel.appendChild(flowerElement);
+                
+                flowerElement.addEventListener('dragstart', handleDragStart);
+                flowerElement.addEventListener('dragend', handleDragEnd);
+            });
+            
+            const stemPositions = [
+                { left: '18%', bottom: '44%' },
+                { left: '27%', bottom: '44%' },
+                { left: '28%', bottom: '59%' },
+                { left: '41%', bottom: '66%' },
+                { left: '51%', bottom: '58%' },
+                { left: '70%', bottom: '54%' },
+                { left: '73%', bottom: '38%' }
+            ];
+            
+            stemPositions.forEach((position, index) => {
+                const stemSpot = document.createElement('div');
+                stemSpot.className = 'stem-spot';
+                stemSpot.id = 'stem-' + index;
+                stemSpot.setAttribute('data-occupied', 'false');
+                stemSpot.style.left = position.left;
+                stemSpot.style.bottom = position.bottom;
+                stemArea.appendChild(stemSpot);
+                
+                stemSpot.addEventListener('dragover', handleDragOver);
+                stemSpot.addEventListener('drop', handleDrop);
+                stemSpot.addEventListener('dragenter', handleDragEnter);
+                stemSpot.addEventListener('dragleave', handleDragLeave);
+            });
+            
+            let draggedElement = null;
+            let sourceElement = null;
+            
+            function handleDragStart(e) {
+                draggedElement = e.target;
+                sourceElement = e.target.parentElement;
+                
+                if (sourceElement.classList.contains('stem-spot')) {
+                    e.dataTransfer.setData('source-stem', sourceElement.id);
+                }
+                
+                if (draggedElement.classList.contains('placed-flower')) {
+                    e.dataTransfer.setData('text/plain', draggedElement.getAttribute('data-flower-id'));
+                } else {
+                    e.dataTransfer.setData('text/plain', draggedElement.id);
+                }
+                
+                e.dataTransfer.effectAllowed = 'move';
+                
+                setTimeout(() => {
+                    draggedElement.style.opacity = '0.5';
+                }, 0);
+            }
+            
+            function handleDragEnd(e) {
+                if (draggedElement) {
+                    draggedElement.style.opacity = '1';
+                }
+            }
+            
+            function handleDragOver(e) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                return false;
+            }
+            
+            function handleDragEnter(e) {
+                e.preventDefault();
+                const target = e.target.closest('.stem-spot') || e.target;
+                if (target.classList.contains('stem-spot')) {
+                    target.classList.add('highlight');
+                }
+            }
+            
+            function handleDragLeave(e) {
+                const target = e.target.closest('.stem-spot') || e.target;
+                if (target.classList.contains('stem-spot')) {
+                    target.classList.remove('highlight');
+                }
+            }
+            
+            function handleDrop(e) {
+                e.preventDefault();
+                
+                const targetStem = e.target.closest('.stem-spot');
+                
+                if (!targetStem || !targetStem.classList.contains('stem-spot')) {
+                    return false;
+                }
+                
+                targetStem.classList.remove('highlight');
+                
+                const flowerId = e.dataTransfer.getData('text/plain');
+                const sourceStemId = e.dataTransfer.getData('source-stem');
+                
+                if (sourceStemId && sourceStemId !== targetStem.id) {
+                    const sourceStem = document.getElementById(sourceStemId);
+                    if (sourceStem) {
+                        sourceStem.innerHTML = '';
+                        sourceStem.setAttribute('data-occupied', 'false');
+                        sourceStem.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+                        sourceStem.style.border = '2px dashed #4CAF50';
+                    }
+                }
+                
+                if (targetStem.getAttribute('data-occupied') === 'true') {
+                    targetStem.innerHTML = '';
+                }
+                
+                const flowerData = flowers.find(f => f.id === flowerId);
+                
+                if (!flowerData) return false;
+                
+                const placedFlower = document.createElement('div');
+                placedFlower.className = 'placed-flower';
+                placedFlower.innerHTML = flowerData.svg;
+                placedFlower.setAttribute('data-flower-id', flowerId);
+                placedFlower.setAttribute('draggable', 'true');
+                
+                placedFlower.addEventListener('dragstart', handleDragStart);
+                placedFlower.addEventListener('dragend', handleDragEnd);
+                
+                targetStem.innerHTML = '';
+                targetStem.appendChild(placedFlower);
+                targetStem.setAttribute('data-occupied', 'true');
+                targetStem.style.backgroundColor = 'transparent';
+                targetStem.style.border = 'none';
+                
+                if (draggedElement) {
+                    draggedElement.style.opacity = '1';
+                }
+                
+                return false;
+            }
+            
+            resetButton.addEventListener('click', function() {
+                const stemSpots = document.querySelectorAll('.stem-spot');
+                stemSpots.forEach(spot => {
+                    spot.innerHTML = '';
+                    spot.setAttribute('data-occupied', 'false');
+                    spot.classList.remove('highlight');
+                    spot.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+                    spot.style.border = '2px dashed #4CAF50';
+                });
+                
+                const flowerElements = document.querySelectorAll('.flower');
+                flowerElements.forEach(flower => {
+                    flower.style.opacity = '1';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+

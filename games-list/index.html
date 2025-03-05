@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Games List</title>
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./words-game/styles.css">
+</head>
+<body>
+    <div id="bg-container">
+        <img class="object" src="./images/bee-obj.png" alt="bee" id="obj1">
+        <img class="object" src="./images/flower-obj.png" alt="flower" id="obj2">
+        <img class="object" src="./images/hive-obj.png" alt="hive" id="obj3">
+
+        <div class="modal-panels-container">
+            <div class="row">
+                <div class="modal disabled" id="modal1">
+                    <div class="game-board" id="game-board"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="modal disabled" id="modal2"></div>
+            </div>
+            <div class="row">
+                <div class="modal disabled" id="modal3"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./script.js"></script>
+    <script src="./words-game/script.js"></script>
+</body>
+</html>
